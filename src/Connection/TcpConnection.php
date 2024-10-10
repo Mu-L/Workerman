@@ -124,11 +124,18 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
     public $onConnect = null;
 
     /**
-     * Emitted when websocket handshake completed (Only work when protocol is ws).
+     * Emitted before websocket handshake (Only works when protocol is ws).
      *
      * @var ?callable
      */
     public $onWebSocketConnect = null;
+
+    /**
+     * Emitted after websocket handshake (Only works when protocol is ws).
+     *
+     * @var ?callable
+     */
+    public $onWebSocketConnected = null;
 
     /**
      * Emitted when data is received.
@@ -393,7 +400,6 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
      * @param mixed $sendBuffer
      * @param bool $raw
      * @return bool|null
-     * @throws Throwable
      */
     public function send(mixed $sendBuffer, bool $raw = false): bool|null
     {
@@ -407,7 +413,7 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
             $parser = $this->protocol;
             try {
                 $sendBuffer = $parser::encode($sendBuffer, $this);
-            } catch(\Throwable $e) {
+            } catch(Throwable $e) {
                 $this->error($e);
             }
             if ($sendBuffer === '') {
@@ -598,7 +604,6 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
      * Resumes reading after a call to pauseRecv.
      *
      * @return void
-     * @throws Throwable
      */
     public function resumeRecv(): void
     {
@@ -616,7 +621,6 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
      * @param resource $socket
      * @param bool $checkEof
      * @return void
-     * @throws Throwable
      */
     public function baseRead($socket, bool $checkEof = true): void
     {
@@ -757,7 +761,6 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
      * Base write handler.
      *
      * @return void
-     * @throws Throwable
      */
     public function baseWrite(): void
     {
@@ -804,7 +807,6 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
      *
      * @param resource $socket
      * @return bool|int
-     * @throws Throwable
      */
     public function doSslHandshake($socket): bool|int
     {
@@ -891,7 +893,6 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
      * @param mixed $data
      * @param bool $raw
      * @return void
-     * @throws Throwable
      */
     public function close(mixed $data = null, bool $raw = false): void
     {
@@ -957,7 +958,6 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
      * Check whether send buffer will be full.
      *
      * @return void
-     * @throws Throwable
      */
     protected function checkBufferWillFull(): void
     {
@@ -974,7 +974,6 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
      * Whether send buffer is full.
      *
      * @return bool
-     * @throws Throwable
      */
     protected function bufferIsFull(): bool
     {
@@ -1006,7 +1005,6 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
      * Destroy connection.
      *
      * @return void
-     * @throws Throwable
      */
     public function destroy(): void
     {
@@ -1094,7 +1092,6 @@ class TcpConnection extends ConnectionInterface implements JsonSerializable
      * Destruct.
      *
      * @return void
-     * @throws Throwable
      */
     public function __destruct()
     {
